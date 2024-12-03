@@ -5,22 +5,23 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #f0f0f0;
+    background-color: #000;
 }
 
 .countdown-container {
     text-align: center;
-    background-color: #fff;
+    background-color: #000;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 h1 {
     margin-bottom: 20px;
+    color: #FFD700;
 }
 
 #countdown {
     font-size: 1.5em;
-    color: #333;
+    color: #FFD700;
 }

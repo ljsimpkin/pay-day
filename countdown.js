@@ -23,9 +23,9 @@ function updateCountdown() {
     const countdownElement = document.querySelector('h1');
     const days = calculateDaysUntilNext18th();
     if (days > 0) {
-        countdownElement.textContent = `${days} day(s) until payday!`;
+        countdownElement.textContent = `${days} day(s) until payday! 💰`;
     } else {
-        countdownElement.textContent = "Payday is today!";
+        countdownElement.textContent = "Payday is today! 💰";
     }
 }
 
