@@ -20,12 +20,12 @@ function calculateDaysUntilNext18th() {
 }
 
 function updateCountdown() {
-    const countdownElement = document.getElementById('countdown');
+    const countdownElement = document.querySelector('#countdown');
     const days = calculateDaysUntilNext18th();
     if (days > 0) {
-        countdownElement.textContent = `${days} day(s) until the 18th of next month.`;
+        countdownElement.textContent = `${days} day(s) until payday!`;
     } else {
-        countdownElement.textContent = "Today is the day!";
+        countdownElement.textContent = "Payday is today!";
     }
 }
 
