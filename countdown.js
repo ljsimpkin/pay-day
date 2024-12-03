@@ -6,7 +6,13 @@ function calculateDaysUntilNext18th() {
         next18th = new Date(today.getFullYear(), today.getMonth() + 2, 18);
     }
 
-    const timeDifference = next18th - today;
+    // Adjust if the 18th is a weekend
+    const dayOfWeek = next18th.getDay();
+    if (dayOfWeek === 6) { // Saturday
+        next18th.setDate(next18th.getDate() - 1); // Move to Friday
+    } else if (dayOfWeek === 0) { // Sunday
+        next18th.setDate(next18th.getDate() - 2); // Move to Friday
+    }
     const daysUntilNext18th = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
 
     return daysUntilNext18th;
