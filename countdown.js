@@ -1,9 +1,9 @@
 function calculateDaysUntilNext18th() {
     const today = new Date();
-    let next18th = new Date(today.getFullYear(), today.getMonth() + 1, 18);
+    let next18th = new Date(today.getFullYear(), today.getMonth(), 18);
 
     if (today.getDate() > 18) {
-        next18th = new Date(today.getFullYear(), today.getMonth() + 2, 18);
+        next18th = new Date(today.getFullYear(), today.getMonth() + 1, 18);
     }
 
     // Adjust if the 18th is a weekend
