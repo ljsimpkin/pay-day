@@ -20,7 +20,7 @@ function calculateDaysUntilNext18th() {
 }
 
 function updateCountdown() {
-    const countdownElement = document.querySelector('#countdown');
+    const countdownElement = document.querySelector('h1');
     const days = calculateDaysUntilNext18th();
     if (days > 0) {
         countdownElement.textContent = `${days} day(s) until payday!`;
