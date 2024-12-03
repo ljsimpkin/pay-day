@@ -13,6 +13,7 @@ function calculateDaysUntilNext18th() {
     } else if (dayOfWeek === 0) { // Sunday
         next18th.setDate(next18th.getDate() - 2); // Move to Friday
     }
+    const timeDifference = next18th - today;
     const daysUntilNext18th = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
 
     return daysUntilNext18th;
@@ -21,7 +22,11 @@ function calculateDaysUntilNext18th() {
 function updateCountdown() {
     const countdownElement = document.getElementById('countdown');
     const days = calculateDaysUntilNext18th();
-    countdownElement.textContent = `${days} day(s) until the 18th of next month.`;
+    if (days > 0) {
+        countdownElement.textContent = `${days} day(s) until the 18th of next month.`;
+    } else {
+        countdownElement.textContent = "Today is the day!";
+    }
 }
 
 document.addEventListener('DOMContentLoaded', updateCountdown);
