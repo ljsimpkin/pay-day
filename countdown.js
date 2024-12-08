@@ -32,8 +32,9 @@ function updateCountdown() {
     const dayOfWeek = next18th.toLocaleString('en-US', { weekday: 'long' });
     const dateString = next18th.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
+    const dayLabel = days === 1 ? 'day' : 'days';
     if (days > 0) {
-        countdownElement.textContent = `${days} day(s) until payday on ${dayOfWeek}, ${dateString}! 💰`;
+        countdownElement.textContent = `${days} ${dayLabel} until payday on ${dayOfWeek}, ${dateString}! 💰`;
     } else {
         countdownElement.textContent = `Payday is today! 💰`;
     }
