@@ -22,10 +22,20 @@ function calculateDaysUntilNext18th() {
 function updateCountdown() {
     const countdownElement = document.querySelector('h1');
     const days = calculateDaysUntilNext18th();
+    const today = new Date();
+    let next18th = new Date(today.getFullYear(), today.getMonth(), 18);
+
+    if (today.getDate() > 18) {
+        next18th = new Date(today.getFullYear(), today.getMonth() + 1, 18);
+    }
+
+    const dayOfWeek = next18th.toLocaleString('en-US', { weekday: 'long' });
+    const dateString = next18th.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
     if (days > 0) {
-        countdownElement.textContent = `${days} day(s) until payday! 💰`;
+        countdownElement.textContent = `${days} day(s) until payday on ${dayOfWeek}, ${dateString}! 💰`;
     } else {
-        countdownElement.textContent = "Payday is today! 💰";
+        countdownElement.textContent = `Payday is today! 💰`;
     }
 }
 
