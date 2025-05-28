@@ -1,15 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown to 18th</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payday Countdown</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #2193b0, #6dd5ed);
+      color: white;
+      text-align: center;
+      padding: 5rem;
+    }
+    h1 {
+      font-size: 3rem;
+    }
+    #countdown, #rent-due, #grocery-budget-total, #grocery-breakdown {
+      font-size: 2rem;
+      margin-top: 2rem;
+    }
+    input[type="number"] {
+      padding: 0.5rem;
+      font-size: 1.2rem;
+      border-radius: 5px;
+      border: none;
+      margin-top: 1rem;
+    }
+  </style>
 </head>
 <body>
-    <div class="countdown-container">
-        <h1>Countdown</h1>
-    </div>
-    <script src="countdown.js"></script>
+  <h1>Next Payday Countdown</h1>
+  <div id="countdown">Calculating...</div>
+
+  <div>
+    <label for="weekly-rent">Enter Weekly Rent: </label>
+    <input type="number" id="weekly-rent" placeholder="e.g. 500" />
+  </div>
+  <div id="rent-due"></div>
+
+  <div>
+    <label for="weekly-grocery">Enter Weekly Grocery Budget: </label>
+    <input type="number" id="weekly-grocery" placeholder="e.g. 150" />
+  </div>
+  <div id="grocery-budget-total"></div>
+  <div id="grocery-breakdown"></div>
+
+  <script>
+    function isWeekend(date) {
+      const day = date.getDay();
+      return day === 0 || day === 6;
+    }
+
+    function getAucklandAnniversary(year) {
+      const date = new Date(year, 0, 31);
+      while (date.getDay() !== 1) {
+        date.setDate(date.getDate() - 1);
+      }
+      return date;
+    }
+
+    function getKingsBirthday(year) {
+      const date = new Date(year, 5, 1);
+      while (date.getDay() !== 1) {
+        date.setDate(date.getDate() + 1);
+      }
+      return date;
+    }
+
+    function isNZPublicHoliday(date) {
+      const year = date.getFullYear();
+      const holidays = [
+        `01-01`, `01-02`, `02-06`, `04-25`, `12-25`, `12-26`
+      ];
+      const easter = getEasterDate(year);
+      const goodFriday = new Date(easter);
+      goodFriday.setDate(easter.getDate() - 2);
+      const easterMonday = new Date(easter);
+      easterMonday.setDate(easter.getDate() + 1);
+      const aucklandAnniversary = getAucklandAnniversary(year);
+      const kingsBirthday = getKingsBirthday(year);
+      const holidayDates = [
+        ...holidays.map(d => `${year}-${d}`),
+        formatDate(goodFriday),
+        formatDate(easterMonday),
+        formatDate(aucklandAnniversary),
+        formatDate(kingsBirthday)
+      ];
+      return holidayDates.includes(formatDate(date));
+    }
+
+    function formatDate(date) {
+      return date.toISOString().split("T")[0];
+    }
+
+    function getEasterDate(year) {
+      const f = Math.floor,
+        G = year % 19,
+        C = f(year / 100),
+        H = (C - f(C / 4) - f((8 * C + 13) / 25) + 19 * G + 15) % 30,
+        I = H - f(H / 28) * (1 - f(29 / (H + 1)) * f((21 - G) / 11)),
+        J = (year + f(year / 4) + I + 2 - C + f(C / 4)) % 7,
+        L = I - J,
+        month = 3 + f((L + 40) / 44),
+        day = L + 28 - 31 * f(month / 4);
+      return new Date(year, month - 1, day);
+    }
+
+    function getNextPayDate(today = new Date()) {
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      let payDate = new Date(year, month, 18);
+      if (today > payDate) {
+        payDate = new Date(year, month + 1, 18);
+      }
+      while (isWeekend(payDate) || isNZPublicHoliday(payDate)) {
+        payDate.setDate(payDate.getDate() - 1);
+      }
+      return payDate;
+    }
+
+    function countThursdaysUntil(endDate) {
+      const today = new Date();
+      let count = 0;
+      const current = new Date(today);
+      while (current <= endDate) {
+        if (current.getDay() === 4) count++;
+        current.setDate(current.getDate() + 1);
+      }
+      return count;
+    }
+
+    function daysUntilSunday(today = new Date()) {
+      const day = today.getDay();
+      return 7 - day;
+    }
+
+    function updateCountdown() {
+      const today = new Date();
+      const payday = getNextPayDate(today);
+      const timeDiff = payday - today;
+      const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+      document.getElementById("countdown").textContent = `You get paid in ${days} day${days !== 1 ? 's' : ''} (${payday.toDateString()})`;
+
+      const rentInput = document.getElementById("weekly-rent");
+      rentInput.addEventListener("input", () => {
+        const rent = parseFloat(rentInput.value);
+        const thursdays = countThursdaysUntil(payday);
+        if (!isNaN(rent)) {
+          document.getElementById("rent-due").textContent = `Rent due until payday: $${(thursdays * rent).toFixed(2)} (${thursdays} Thursday${thursdays !== 1 ? 's' : ''})`;
+        } else {
+          document.getElementById("rent-due").textContent = "";
+        }
+      });
+
+      const groceryInput = document.getElementById("weekly-grocery");
+      groceryInput.addEventListener("input", () => {
+        const grocery = parseFloat(groceryInput.value);
+        if (!isNaN(grocery)) {
+          const dailyBudget = grocery / 7;
+          const remainingDays = Math.ceil((payday - today) / (1000 * 60 * 60 * 24));
+          const totalGroceries = dailyBudget * remainingDays;
+          const daysToSunday = daysUntilSunday(today);
+          const groceriesUntilSunday = dailyBudget * daysToSunday;
+          const groceriesAfterSunday = totalGroceries - groceriesUntilSunday;
+
+          document.getElementById("grocery-budget-total").textContent = `Remaining grocery budget until payday: $${totalGroceries.toFixed(2)}`;
+          document.getElementById("grocery-breakdown").textContent = `Until Sunday: $${groceriesUntilSunday.toFixed(2)} | After Sunday: $${groceriesAfterSunday.toFixed(2)}`;
+        } else {
+          document.getElementById("grocery-budget-total").textContent = "";
+          document.getElementById("grocery-breakdown").textContent = "";
+        }
+      });
+    }
+
+    updateCountdown();
+  </script>
 </body>
 </html>
