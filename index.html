@@ -37,6 +37,9 @@
     <input type="number" id="weekly-rent" placeholder="e.g. 500" />
   </div>
   <div id="rent-due"></div>
+  <div id="thursday-warning" style="background-color: #ff6b6b; padding: 1rem; margin: 1rem 0; border-radius: 5px; display: none;">
+    ⚠️ WARNING: Payday falls on Thursday (rent day)! Extra $350 added to ensure you have enough before getting paid.
+  </div>
 
   <div>
     <label for="weekly-grocery">Enter Weekly Grocery Budget: </label>
@@ -146,10 +149,24 @@
       rentInput.addEventListener("input", () => {
         const rent = parseFloat(rentInput.value);
         const thursdays = countThursdaysUntil(payday);
+        const isPaydayThursday = payday.getDay() === 4; // 4 = Thursday
+
         if (!isNaN(rent)) {
-          document.getElementById("rent-due").textContent = `Rent due until payday: $${(thursdays * rent).toFixed(2)} (${thursdays} Thursday${thursdays !== 1 ? 's' : ''})`;
+          let totalRent = thursdays * rent;
+          let warningText = "";
+
+          if (isPaydayThursday) {
+            totalRent += 350; // Add extra $350 for same-day rent payment
+            warningText = " (includes $350 extra for Thursday payday)";
+            document.getElementById("thursday-warning").style.display = "block";
+          } else {
+            document.getElementById("thursday-warning").style.display = "none";
+          }
+
+          document.getElementById("rent-due").textContent = `Rent due until payday: $${totalRent.toFixed(2)} (${thursdays} Thursday${thursdays !== 1 ? 's' : ''})${warningText}`;
         } else {
           document.getElementById("rent-due").textContent = "";
+          document.getElementById("thursday-warning").style.display = "none";
         }
       });
 
